@@ -2,24 +2,27 @@ from django.shortcuts import render,redirect
 from django.contrib.auth import authenticate,login,logout
 from django.contrib import messages
 from .forms import SignUpForm
+from .models import Record
 
 # Create your views here.
 
 
 def home(request):  # we can't call it login because it will conflict with built-in function
-    if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
-        user = authenticate(request,username=username,password=password)
-        if user is not None:
-            login(request,user)
-            messages.success(request,'You are now logged in!')
-            return redirect('home')
-        else:
-            messages.error(request,'There was a error login in , please try again')
-            return redirect('home')
-    else:
-        return render(request,'home.html',{})
+	records=Record.objects.all()
+	#if user is sumitting form its POST request
+	if request.method == 'POST':
+		username = request.POST['username']
+		password = request.POST['password']
+		user = authenticate(request,username=username,password=password)
+		if user is not None:
+			login(request,user)
+			messages.success(request,'You are now logged in!')
+			return redirect('home')
+		else:
+			messages.error(request,'There was a error login in , please try again')
+			return redirect('home')
+	else:
+		return render(request,'home.html',{'records':records})#already submitted , viewing the page
     
 
 def register_user(request):
@@ -47,3 +50,12 @@ def logout_user(request):
 def logout_view(request):
       logout(request)
       return redirect("/")
+
+def customer_record(request,pk):
+	if request.user.is_authenticated:
+		#look up records
+		customer_record=Record.objects.get(id=pk)
+		return render(request,'record.html',{'customer_record':customer_record})
+	else:
+		messages.success(request,'You are not logged in')
+		return redirect('home')
