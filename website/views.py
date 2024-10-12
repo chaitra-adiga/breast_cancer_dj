@@ -59,3 +59,15 @@ def customer_record(request,pk):
 	else:
 		messages.success(request,'You are not logged in')
 		return redirect('home')
+	
+
+def delete_record(request,pk):
+	if request.user.is_authenticated:
+		#look up records
+		customer_record=Record.objects.get(id=pk)
+		customer_record.delete()
+		messages.success(request,'Record Deleted Successfully ...')
+		return redirect('home')
+	else:
+		messages.success(request,'You are not logged in')
+		return redirect('home')
