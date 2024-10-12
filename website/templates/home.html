@@ -1,7 +1,14 @@
-{% extends 'base.html' %} {% block content %} {% if user.isauthenticated %}
+{% extends 'base.html' %} {% block content %} 
+{% if user.is_authenticated %}
+<p>You are signed in as {{user.email}}</p>
+
 <h1>hello there</h1>
 
 {% else %}
+<!-- here we'll inject google authentication -->
+ {% load socialaccount %}
+ <h2>Google Login </h2>
+ <a href="{% provider_login_url 'google' %}"?next="">Login with Google</a>
 <div class="col-md-6 offset-md-3">
   <h1>Login</h1>
   <br />
